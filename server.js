@@ -22,6 +22,19 @@ function createNewNote(body, notesArray) {
     return note;
 };
 
+function deleteNote(id, notesArray) {
+    for (let i = 0; i < notesArray.length; i++) {
+        if (notesArray[i].id == id) {
+            notesArray.splice(i, 1);
+        };
+    };
+
+    fs.writeFileSync(
+        path.join(__dirname, './db/db.json'),
+        JSON.stringify({ notes: notesArray }, null, 2)
+    );
+};
+
 app.use(express.static('public'));
 
 app.use(express.urlencoded({ extended: true }));
@@ -41,6 +54,12 @@ app.post('/api/notes', (req, res) => {
 
     res.json(note);
 });
+
+app.delete('/api/notes/:id', (req, res) => {
+    deleteNote(req.params.id, notes);
+
+    res.json(notes);
+})
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, './public/index.html'));
